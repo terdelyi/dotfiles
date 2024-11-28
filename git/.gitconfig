@@ -1,0 +1,18 @@
+[user]
+	name = Tamas Erdelyi
+	email = terdelyi@gmail.com
+[core]
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+[color]
+    ui = auto
+[github]
+    user = terdelyi
+[commit]
+    gpgSign = true
+[gpg "ssh"]
+    allowedSignersFile = ~/.ssh/allowed_git_signers
+[gpg]
+    format = ssh
+[user]
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G

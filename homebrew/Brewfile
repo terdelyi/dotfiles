@@ -1,0 +1,70 @@
+# Taps
+tap 'homebrew/cask-fonts'
+tap 'homebrew/cask-versions'
+tap 'homebrew/bundle'
+
+# Binaries
+brew 'bash'
+brew 'bat'
+brew 'coreutils'
+brew 'ffmpeg'
+brew 'gh'
+brew 'git'
+brew 'grep'
+brew 'httpie'
+brew 'jq'
+brew 'mackup'
+brew 'mas'
+brew 'pkg-config'
+brew 'stripe/stripe-cli/stripe'
+brew 'stripe/stripe-mock/stripe-mock'
+brew 'svn'
+
+# Development
+brew 'imagemagick'
+
+# Dev
+cask 'dbngin'
+cask 'docker'
+cask 'figma'
+cask 'github'
+cask 'google-chrome'
+cask 'transmit'
+cask 'phpstorm'
+cask 'yaak'
+
+# Utils
+cask '1password'
+brew '1password-cli'
+cask 'caffeine'
+cask 'httpie'
+cask 'imageoptim'
+cask 'nordvpn'
+
+# Media
+cask 'plexamp'
+cask 'vlc'
+
+# Communication
+cask 'discord'
+cask 'messenger'
+cask 'microsoft-teams'
+cask 'zoom'
+
+# Quicklook
+cask 'qlmarkdown'
+cask 'quicklook-json'
+
+# Fonts
+cask 'font-lato'
+cask 'font-open-sans'
+cask 'font-roboto'
+cask 'font-source-code-pro-for-powerline'
+cask 'font-source-code-pro'
+cask 'font-source-sans-pro'
+cask 'font-source-serif-pro'
+
+# Mac App Store
+mas 'Keynote', id: 409183694
+mas 'Numbers', id: 409203825
+mas 'Things', id: 904280696
