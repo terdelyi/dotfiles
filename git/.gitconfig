@@ -1,18 +1,30 @@
 [user]
 	name = Tamas Erdelyi
-	email = terdelyi@gmail.com
+	email = support@terdelyi.co.uk
+
 [core]
 	excludesfile = ~/.gitignore_global
 	autocrlf = input
+
 [color]
     ui = auto
+
 [github]
     user = terdelyi
+
 [commit]
     gpgSign = true
+
 [gpg "ssh"]
-    allowedSignersFile = ~/.ssh/allowed_git_signers
-[gpg]
-    format = ssh
-[user]
+    program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+[user "ssh"]
     signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G
+
+[user "gpg"]
+    signingkey = BBD67390EF1D02B9
+
+[gpg]
+    # Using ssh for default
+    format = ssh
+
