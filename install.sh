@@ -15,9 +15,13 @@ if test ! "$(which brew)"; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
+# Sets OhMyZSH config
 rm -rf "$HOME/.zshrc"
 ln -sw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
+
+# Sets Git config
+rm -rf "$HOME/.gitconfig"
+ln -sw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 
 # Update Homebrew recipes
 brew update
