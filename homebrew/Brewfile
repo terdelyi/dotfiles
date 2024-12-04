@@ -1,5 +1,4 @@
 # Taps
-tap 'homebrew/cask-versions'
 tap 'homebrew/bundle'
 
 # Binaries
@@ -13,6 +12,9 @@ brew 'grep'
 brew 'jq'
 brew 'mas'
 brew 'gnupg'
+brew 'composer'
+brew 'php'
+brew 'go'
 
 # Development
 brew 'imagemagick'
@@ -30,7 +32,7 @@ cask 'font-ubuntu-mono'
 
 # Utils
 cask '1password'
-brew '1password-cli'
+cask '1password-cli'
 cask 'caffeine'
 cask 'httpie'
 cask 'imageoptim'
