@@ -12,9 +12,10 @@ brew 'grep'
 brew 'jq'
 brew 'mas'
 brew 'gnupg'
-brew 'composer'
 brew 'php'
+brew 'composer'
 brew 'go'
+brew 'node'
 
 # Development
 brew 'imagemagick'
