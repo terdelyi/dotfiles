@@ -15,7 +15,7 @@ brew 'gnupg'
 brew 'php'
 brew 'composer'
 brew 'go'
-brew 'node'
+brew 'nvm'
 
 # Development
 brew 'imagemagick'
@@ -31,6 +31,7 @@ cask 'transmit'
 cask 'phpstorm'
 cask 'yaak'
 cask 'font-ubuntu-mono'
+brew 'mailpit'
 
 # Utils
 cask '1password'

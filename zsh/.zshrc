@@ -40,3 +40,10 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
+
+# Fix for GPG TTY error: https://github.com/Homebrew/homebrew-core/issues/14737#issuecomment-309848851
+GPG_TTY=$(tty)
+export GPG_TTY
+
+# Load nvm
+[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM

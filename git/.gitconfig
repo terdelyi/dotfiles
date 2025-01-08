@@ -1,6 +1,7 @@
 [user]
 	name = Tamas Erdelyi
 	email = support@terdelyi.co.uk
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G
 
 [core]
 	excludesfile = ~/.gitignore_global
@@ -21,12 +22,5 @@
 [gpg "ssh"]
     program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 
-[user]
-    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G
-    #signingkey = BBD67390EF1D02B9
-
 [gpg]
-    # Using ssh for default
     format = ssh
-    #format = gpg
-

@@ -41,5 +41,8 @@ valet trust
 # Set 1Password SSH agent
 mkdir -p ~/.1password && ln -s ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
 
+# Start Mailpit
+brew services start mailpit
+
 # Set macOS preferences - we will run this last because this will reload the shell
 . mac/.macos
