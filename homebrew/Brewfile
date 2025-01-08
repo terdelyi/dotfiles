@@ -22,7 +22,6 @@ brew 'imagemagick'
 
 # Dev
 cask 'dbngin'
-cask 'chrome'
 cask 'docker'
 cask 'figma'
 cask 'github'
