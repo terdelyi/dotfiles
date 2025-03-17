@@ -27,3 +27,7 @@ alias unstage="git restore --staged ."
 alias wip="commit wip"
 alias setgpg="git config gpg.format gpg"
 alias setssh="git config gpg.format ssh"
+
+# Valet
+alias va="valet php artisan"
+alias vc="valet composer"
