@@ -5,15 +5,15 @@ export DOTFILES=$HOME/.dotfiles/zsh
 export ZSH="$HOME/.oh-my-zsh"
 
 # Minimal - Theme Settings
-export MNML_INSERT_CHAR="$"
-export MNML_PROMPT=(mnml_git mnml_keymap)
-export MNML_RPROMPT=('mnml_cwd 20')
+#export MNML_INSERT_CHAR="$"
+#export MNML_PROMPT=(mnml_git mnml_keymap)
+#export MNML_RPROMPT=('mnml_cwd 20')
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="sunaku"
+#ZSH_THEME="sunaku"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -47,3 +47,11 @@ export GPG_TTY
 
 # Load nvm
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
+
+# Autocomplete
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# What is this?
+autoload -U promptinit; promptinit
+prompt pure

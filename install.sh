@@ -22,6 +22,7 @@ ln -sw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 # Sets Git config
 rm -rf "$HOME/.gitconfig"
 ln -sw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
+ln -sw "$HOME/.dotfiles/git/.gitignore_global" "$HOME/.gitignore_global"
 
 # Update Homebrew recipes
 brew update

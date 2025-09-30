@@ -17,6 +17,10 @@ brew 'composer'
 brew 'go'
 brew 'nvm'
 
+# Terminal
+brew 'zsh-autosuggestions'
+brew 'zsh-syntax-highlighting'
+
 # Development
 brew 'imagemagick'
 

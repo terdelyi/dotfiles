@@ -14,3 +14,8 @@ add_to_path "$HOME/.node/bin"
 # Use project specific binaries before global ones
 add_to_path "vendor/bin"
 add_to_path "node_modules/.bin"
+
+# Ruby
+add_to_path "/opt/homebrew/opt/ruby/bin"
+export GEM_HOME="$HOME/.gem/ruby/3.4.0"
+export PATH="$GEM_HOME/bin:$PATH"
