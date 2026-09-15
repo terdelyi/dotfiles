@@ -57,7 +57,6 @@ cask 'cursor'
 cask 'dbngin'
 cask 'docker-desktop'
 cask 'figma'
-cask 'flutter'
 cask 'ghostty'
 cask 'github'
 cask 'phpstorm'
@@ -75,6 +74,8 @@ cask 'caffeine'
 cask 'handy'
 cask 'httpie-desktop'
 cask 'imageoptim'
+# Chosen browsers, in place of Chrome.
+cask 'brave-browser'
 cask 'microsoft-edge'
 cask 'the-unarchiver'
 
@@ -91,10 +92,4 @@ cask 'qlmarkdown'
 cask 'quicklook-json'
 
 # Mac App Store
-mas 'Developer', id: 640199958
-mas 'Hand Mirror', id: 1502839586
-mas 'KeyFinder', id: 6449409689
-mas 'Teleprompter', id: 417605357
-mas 'TestFlight', id: 899247664
-mas 'Transporter', id: 1450874784
 mas 'Xcode', id: 497799835
