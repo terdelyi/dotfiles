@@ -17,5 +17,13 @@ add_to_path "node_modules/.bin"
 
 # Ruby
 add_to_path "/opt/homebrew/opt/ruby/bin"
-export GEM_HOME="$HOME/.gem/ruby/3.4.0"
-export PATH="$GEM_HOME/bin:$PATH"
+if (( $+commands[ruby] )); then
+  export GEM_HOME="$(ruby -e 'puts Gem.user_dir')"
+  add_to_path "$GEM_HOME/bin"
+fi
+
+# Python
+add_to_path "/opt/homebrew/opt/python/libexec/bin"
+
+# Binaries installed by pipx and friends
+add_to_path "$HOME/.local/bin"

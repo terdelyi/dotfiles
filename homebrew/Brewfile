@@ -12,10 +12,14 @@ brew 'grep'
 brew 'jq'
 brew 'mas'
 brew 'gnupg'
-brew 'php'
 brew 'composer'
-brew 'go'
 brew 'nvm'
+
+# Languages
+brew 'python@3.14'
+brew 'pipx'
+brew 'go'
+brew 'php'
 
 # Terminal
 brew 'zsh-autosuggestions'

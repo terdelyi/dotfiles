@@ -37,9 +37,11 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# You may need to manually set your language environment
-export LC_ALL=en_GB.UTF-8
-export LANG=en_GB.UTF-8
+# Character handling only. Terminal emulators export a bare `LC_CTYPE=UTF-8`,
+# but that depends on a GUI preference; without it we fall back to C and UTF-8
+# breaks. LANG and LC_ALL are deliberately left unset: they only change
+# collation, and C byte order is what scripts and servers use.
+export LC_CTYPE=en_GB.UTF-8
 
 # Fix for GPG TTY error: https://github.com/Homebrew/homebrew-core/issues/14737#issuecomment-309848851
 GPG_TTY=$(tty)
@@ -55,3 +57,5 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # What is this?
 autoload -U promptinit; promptinit
 prompt pure
+
+export SSH_AUTH_SOCK=~/.1password/agent.sock

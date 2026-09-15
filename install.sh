@@ -16,13 +16,31 @@ if test ! "$(which brew)"; then
 fi
 
 # Sets OhMyZSH config
-rm -rf "$HOME/.zshrc"
-ln -sw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
+ln -sfnw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 
 # Sets Git config
-rm -rf "$HOME/.gitconfig"
-ln -sw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
-ln -sw "$HOME/.dotfiles/git/.gitignore_global" "$HOME/.gitignore_global"
+ln -sfnw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
+ln -sfnw "$HOME/.dotfiles/git/.gitignore_global" "$HOME/.gitignore_global"
+
+# Stop macOS from forwarding our locale to every host we SSH into.
+# /etc/ssh/ssh_config.d/100-macos.conf sets `SendEnv LANG LC_*`, which ships
+# locale names the remote may not have generated, producing "cannot change
+# locale" warnings and mangled UTF-8. Clearing them has to be parsed *after*
+# that file, which rules out ~/.ssh/config - the user config is read before the
+# system one - so this goes in a sibling that sorts later in the include.
+ssh_locale_conf="/etc/ssh/ssh_config.d/200-no-locale-forwarding.conf"
+
+if ssh -G dotfiles-install-probe 2>/dev/null | grep -qiE '^sendenv (lang|lc_)'; then
+  echo "Disabling SSH locale forwarding in $ssh_locale_conf..."
+
+  sudo tee "$ssh_locale_conf" > /dev/null <<'EOF'
+# Managed by ~/.dotfiles/install.sh - re-run it if a macOS update removes this.
+Host *
+  SendEnv -LANG -LC_*
+EOF
+
+  sudo chmod 644 "$ssh_locale_conf"
+fi
 
 # Update Homebrew recipes
 brew update
@@ -32,7 +50,7 @@ brew tap homebrew/bundle
 brew bundle --file ./homebrew/Brewfile
 
 # Create a projects directories
-mkdir "$HOME/Code"
+mkdir -p "$HOME/Code"
 
 # Install Valet for PHP prototyping
 composer global require laravel/valet
@@ -40,7 +58,7 @@ valet install
 valet trust
 
 # Set 1Password SSH agent
-mkdir -p ~/.1password && ln -s ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
+mkdir -p ~/.1password && ln -sfnw ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
 
 # Start Mailpit
 brew services start mailpit

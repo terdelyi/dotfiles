@@ -2,21 +2,20 @@
 
 # Function to set or change the GPG key for signing commits in a Git repository
 set_gpg_signing_key() {
-    repo_path="$(pwd)"
+    local repo_path="$PWD"
     local gpg_key_id=${1:-"0F7F96EC6F3C0C38"}
     local email=${2:-""}
 
-    if [ ! -d "$repo_path/.git" ]; then
-        echo "Error: $repo_path is not a valid Git repository."
+    # rev-parse also accepts subdirectories, worktrees and submodules, where
+    # .git is a file rather than a directory.
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Error: $repo_path is not a Git repository." >&2
         return 1
     fi
-
-    cd "$repo_path" || return 1
 
     git config gpg.format openpgp
     git config user.signingkey "$gpg_key_id"
     git config commit.gpgSign true
-    git config commit.tag true
 
     if [ -n "$email" ]; then
         git config user.email "$email"
@@ -28,21 +27,20 @@ set_gpg_signing_key() {
 
 # Function to set or change the SSH key for signing commits in a Git repository
 set_ssh_signing_key() {
-    repo_path="$(pwd)"
+    local repo_path="$PWD"
     local ssh_key=${1:-"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G"}
     local email=${2:-""}
 
-    if [ ! -d "$repo_path/.git" ]; then
-        echo "Error: $repo_path is not a valid Git repository."
+    # rev-parse also accepts subdirectories, worktrees and submodules, where
+    # .git is a file rather than a directory.
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Error: $repo_path is not a Git repository." >&2
         return 1
     fi
-
-    cd "$repo_path" || return 1
 
     git config gpg.format ssh
     git config user.signingkey "$ssh_key"
     git config commit.gpgSign true
-    git config commit.tag true
 
     if [ -n "$email" ]; then
         git config user.email "$email"
@@ -64,4 +62,72 @@ get_gpg_key_id() {
   gpg --list-keys --with-colons | \
     awk -F: -v email="$email" '$0 ~ email && /^pub/ {print $5}' | \
     jq -R -s -c 'split("\n")[:-1]'
+}
+
+# Valet serves *.test through /etc/resolver/test -> dnsmasq, which is plain DNS,
+# and a connected VPN takes DNS over - breaking every site. /etc/hosts is read
+# before DNS, so mirror the linked sites into it to survive the VPN. The marker
+# text is load-bearing: it identifies the block to replace on the next sync.
+sync_valet_hosts() {
+  local begin="# BEGIN VALET VPN HOSTS"
+  local end="# END VALET VPN HOSTS"
+  local tld block site
+
+  if (( ! $+commands[valet] )); then
+    echo "valet is not installed" >&2
+    return 1
+  fi
+
+  # `command` skips the wrapper below, which would otherwise re-enter valet.
+  tld=$(command valet tld) || return 1
+
+  block="$begin"$'\n'
+
+  # (N-/) drops the glob when Sites is empty and follows each symlink, so a
+  # project directory that has since been deleted does not get a hosts entry.
+  for site in "$HOME/.config/valet/Sites"/*(N-/); do
+    block+="127.0.0.1 ${site:t}.${tld}"$'\n'
+  done
+
+  block+="$end"
+
+  # One sudo call, so one password prompt: sed -i keeps a backup for free,
+  # cat appends the new block, and mDNSResponder is what actually drops the
+  # DNS cache - dscacheutil alone has not been enough for years.
+  printf '%s\n' "$block" | sudo sh -c "
+    sed -i '.bak' '/^$begin\$/,/^$end\$/d' /etc/hosts &&
+    cat >> /etc/hosts || exit 1
+
+    dscacheutil -flushcache
+    killall -HUP mDNSResponder
+  "
+}
+
+# Keep /etc/hosts in step with the site list automatically.
+valet() {
+  if [[ "$1" == "sync-hosts" ]]; then
+    sync_valet_hosts
+    return
+  fi
+
+  command valet "$@" || return
+
+  case "$1" in
+    link|unlink)
+      sync_valet_hosts
+      ;;
+  esac
+}
+
+# DBngin does not put its MySQL client on the PATH, and the version directory
+# changes on every upgrade, so resolve the newest one installed.
+mysql() {
+  local -a clients=(/Users/Shared/DBngin/mysql/*/bin/mysql(Nn))
+
+  if (( $#clients == 0 )); then
+    echo "No DBngin MySQL client under /Users/Shared/DBngin/mysql" >&2
+    return 1
+  fi
+
+  command "$clients[-1]" "$@"
 }
