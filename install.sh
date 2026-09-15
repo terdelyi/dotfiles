@@ -13,6 +13,42 @@ if test ! -f "$DOTFILES_ROOT/install.sh"; then
   return 1 2>/dev/null || exit 1
 fi
 
+# The profile decides which Brewfile extras, which computer name and which Git
+# identity apply, so settle it before the ten minutes of downloads rather than
+# after. An argument wins, then a previous answer, then a prompt.
+#
+# Guessing here is the dangerous case: defaulting a non-interactive run to
+# "personal" is how a work laptop ends up with the media and App Store apps, so
+# refuse instead. Nothing has been installed at this point.
+profile_file="$HOME/.dotfiles.profile"
+profile=${1:-}
+
+if test -z "$profile" && test -f "$profile_file"; then
+  profile=$(cat "$profile_file")
+fi
+
+if test -z "$profile"; then
+  if test -t 0; then
+    echo "Which machine is this? [personal/work]"
+    read -r profile
+  else
+    echo "No profile given and $profile_file does not exist." >&2
+    echo "Re-run as: . $DOTFILES_ROOT/install.sh [personal|work]" >&2
+    return 1 2>/dev/null || exit 1
+  fi
+fi
+
+case "$profile" in
+  personal|work) ;;
+  *)
+    echo "Unknown profile '$profile' - expected 'personal' or 'work'." >&2
+    return 1 2>/dev/null || exit 1
+    ;;
+esac
+
+printf '%s\n' "$profile" > "$profile_file"
+echo "Setting up a $profile machine. Edit $profile_file to change this."
+
 # Check for Oh My Zsh and install if we don't have it. `omz` is a shell
 # function rather than a binary, so `which omz` never finds it from this
 # script - testing for it re-ran the installer on every pass.
@@ -64,21 +100,42 @@ ln -sfnw "$DOTFILES_ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
 gitconfig_local="$HOME/.gitconfig.local"
 
 if test ! -f "$gitconfig_local"; then
-  echo "Seeding $gitconfig_local - fill in your identity before committing..."
+  # Ask, so a work machine does not end up authoring commits from a personal
+  # address. The old placeholder was a valid-looking you@example.com, which git
+  # committed with perfectly happily; leaving the field empty instead makes git
+  # refuse until it is filled in, which is the safer failure.
+  git_name=""
+  git_email=""
 
-  cat > "$gitconfig_local" <<'EOF'
-# Machine-local identity. Not tracked in ~/.dotfiles - included from
-# git/.gitconfig. Add includeIf blocks here for per-directory identities.
+  if test -t 0; then
+    echo "Git author name for this $profile machine (blank to fill in later):"
+    read -r git_name
+    echo "Git author email for this $profile machine (blank to fill in later):"
+    read -r git_email
+  fi
+
+  echo "Seeding $gitconfig_local..."
+
+  # Unquoted heredoc so the answers land in the file. read -r cannot produce a
+  # newline, so neither value can inject a config directive of its own.
+  cat > "$gitconfig_local" <<EOF
+# Machine-local identity for this $profile machine. Not tracked in
+# ~/.dotfiles - included from git/.gitconfig. Add includeIf blocks here for
+# per-directory identities.
 [user]
-	name = Your Name
-	email = you@example.com
-	# Public half of the signing key, as `ssh-ed25519 AAAA...`.
+	name = $git_name
+	email = $git_email
+	# Public half of the signing key, as \`ssh-ed25519 AAAA...\`.
 	signingkey =
 	# Read by set_gpg_signing_key in zsh/functions.zsh.
 	gpgsigningkey =
 EOF
 
   chmod 600 "$gitconfig_local"
+
+  if test -z "$git_email"; then
+    echo "No email set - git will refuse to commit until you edit $gitconfig_local." >&2
+  fi
 fi
 
 # git verifies signatures against this file, so it has to name the same key the
@@ -130,22 +187,6 @@ brew update
 # than conditionals inside one keeps the work machine's list reviewable, and
 # sidesteps the fact that Homebrew scrubs any env var not named HOMEBREW_*,
 # so a plain `if ENV['WORK']` in a Brewfile silently never fires.
-profile_file="$HOME/.dotfiles.profile"
-
-if test ! -f "$profile_file"; then
-  echo "Which machine is this? [personal/work]"
-  read -r profile
-
-  case "$profile" in
-    work) : ;;
-    *) profile=personal ;;
-  esac
-
-  printf '%s\n' "$profile" > "$profile_file"
-  echo "Recorded $profile in $profile_file - edit it to change profile."
-fi
-
-profile=$(cat "$profile_file")
 profile_brewfile="$DOTFILES_ROOT/homebrew/Brewfile.$profile"
 
 brew tap homebrew/bundle

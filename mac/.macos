@@ -21,11 +21,26 @@ sudo_keepalive_pid=$!
 # General UI/UX                                                               #
 ###############################################################################
 
-# Set computer name (as done via System Settings → General → Sharing)
-sudo scutil --set ComputerName "MacBook Tamas"
-sudo scutil --set HostName "MacBook Tamas"
-sudo scutil --set LocalHostName "MacBook Tamas"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MacBook Tamas"
+# Set computer name (as done via System Settings → General → Sharing).
+# Personal machines only: a work machine is usually named by IT, and colliding
+# with their naming policy is worse than leaving it alone. Read the profile
+# from disk rather than inheriting it, so this file still works run directly.
+profile_file="$HOME/.dotfiles.profile"
+
+if [ -f "$profile_file" ]; then
+    macos_profile=$(cat "$profile_file")
+else
+    macos_profile=personal
+fi
+
+if [ "$macos_profile" = personal ]; then
+    sudo scutil --set ComputerName "MacBook Tamas"
+    sudo scutil --set HostName "MacBook Tamas"
+    sudo scutil --set LocalHostName "MacBook Tamas"
+    sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MacBook Tamas"
+else
+    echo "Leaving the computer name alone on a $macos_profile machine."
+fi
 
 # Disable the startup chime. Apple Silicon ignores the old SystemAudioVolume
 # trick - it reads back as %80 however often you set it - and reads StartupMute
