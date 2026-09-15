@@ -96,6 +96,14 @@ sync_valet_hosts() {
   # (N-/) drops the glob when Sites is empty and follows each symlink, so a
   # project directory that has since been deleted does not get a hosts entry.
   for site in "$HOME/.config/valet/Sites"/*(N-/); do
+    # The name is about to be written into /etc/hosts as root, so it has to be
+    # a plausible hostname and nothing else - a directory name containing a
+    # newline would otherwise append lines of its own to the file.
+    if [[ ! "${site:t}" =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' ]]; then
+      echo "Skipping ${site:t}: not a valid hostname" >&2
+      continue
+    fi
+
     block+="127.0.0.1 ${site:t}.${tld}"$'\n'
   done
 

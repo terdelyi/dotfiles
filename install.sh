@@ -2,6 +2,17 @@
 
 echo "Setting up Mac..."
 
+# Every path below is anchored here rather than to the working directory. The
+# README says to source this file, so a relative `mac/.macos` would resolve
+# against whatever directory you happen to be standing in - and that step runs
+# with sudo already primed. The symlink targets already assume this location.
+DOTFILES_ROOT="$HOME/.dotfiles"
+
+if test ! -f "$DOTFILES_ROOT/install.sh"; then
+  echo "Expected the dotfiles at $DOTFILES_ROOT - clone them there and re-run." >&2
+  return 1 2>/dev/null || exit 1
+fi
+
 # Check for Oh My Zsh and install if we don't have it
 if test ! "$(which omz)"; then
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -16,11 +27,11 @@ if test ! "$(which brew)"; then
 fi
 
 # Sets OhMyZSH config
-ln -sfnw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
+ln -sfnw "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
 
 # Sets Git config
-ln -sfnw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
-ln -sfnw "$HOME/.dotfiles/git/.gitignore_global" "$HOME/.gitignore_global"
+ln -sfnw "$DOTFILES_ROOT/git/.gitconfig" "$HOME/.gitconfig"
+ln -sfnw "$DOTFILES_ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
 
 # Identity is machine-local and deliberately untracked, so .gitconfig includes
 # it from here. Seed a template on a fresh machine; never clobber a real one.
@@ -90,7 +101,7 @@ brew update
 
 # Install dependencies with bundle
 brew tap homebrew/bundle
-brew bundle --file ./homebrew/Brewfile
+brew bundle --file "$DOTFILES_ROOT/homebrew/Brewfile"
 
 # Create a projects directories
 mkdir -p "$HOME/Code"
@@ -107,4 +118,4 @@ mkdir -p ~/.1password && ln -sfnw ~/Library/Group\ Containers/2BUA8C4S2C.com.1pa
 brew services start mailpit
 
 # Set macOS preferences - we will run this last because this will reload the shell
-. mac/.macos
+. "$DOTFILES_ROOT/mac/.macos"
