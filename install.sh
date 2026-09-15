@@ -109,9 +109,38 @@ fi
 # Update Homebrew recipes
 brew update
 
-# Install dependencies with bundle
+# Install dependencies with bundle. The shared Brewfile goes on every machine;
+# the profile decides what else. Keeping the split in two tracked files rather
+# than conditionals inside one keeps the work machine's list reviewable, and
+# sidesteps the fact that Homebrew scrubs any env var not named HOMEBREW_*,
+# so a plain `if ENV['WORK']` in a Brewfile silently never fires.
+profile_file="$HOME/.dotfiles.profile"
+
+if test ! -f "$profile_file"; then
+  echo "Which machine is this? [personal/work]"
+  read -r profile
+
+  case "$profile" in
+    work) : ;;
+    *) profile=personal ;;
+  esac
+
+  printf '%s\n' "$profile" > "$profile_file"
+  echo "Recorded $profile in $profile_file - edit it to change profile."
+fi
+
+profile=$(cat "$profile_file")
+profile_brewfile="$DOTFILES_ROOT/homebrew/Brewfile.$profile"
+
 brew tap homebrew/bundle
 brew bundle --file "$DOTFILES_ROOT/homebrew/Brewfile"
+
+if test -f "$profile_brewfile"; then
+  echo "Installing $profile extras..."
+  brew bundle --file "$profile_brewfile"
+else
+  echo "No Brewfile for profile '$profile' - skipping extras." >&2
+fi
 
 # Create a projects directories
 mkdir -p "$HOME/Code"

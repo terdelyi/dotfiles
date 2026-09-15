@@ -1,3 +1,7 @@
+# Shared core: installed on every machine, work or personal.
+# Machine-specific additions live in Brewfile.personal and Brewfile.work,
+# picked by install.sh from ~/.dotfiles.profile.
+
 # Taps
 tap 'homebrew/bundle'
 
@@ -12,14 +16,17 @@ brew 'grep'
 brew 'jq'
 brew 'mas'
 brew 'gnupg'
+# GPG needs a pinentry to prompt for a passphrase; without it signing fails in
+# a way that looks like a key problem. Was installed by hand on this machine.
+brew 'pinentry-mac'
 brew 'composer'
 brew 'nvm'
 
 # Languages
-brew 'python@3.14'
 brew 'pipx'
-brew 'go'
 brew 'php'
+# zsh/path.zsh puts this on PATH and derives GEM_HOME from it.
+brew 'ruby'
 
 # Terminal
 brew 'pure'
@@ -31,12 +38,11 @@ brew 'imagemagick'
 
 # Dev
 cask 'dbngin'
-cask 'docker'
+cask 'docker-desktop'
 cask 'figma'
 cask 'github'
-cask 'google-chrome'
-cask 'transmit'
 cask 'phpstorm'
+cask 'sublime-text'
 cask 'yaak'
 cask 'font-ubuntu-mono'
 brew 'mailpit'
@@ -45,26 +51,17 @@ brew 'mailpit'
 cask '1password'
 cask '1password-cli'
 cask 'caffeine'
-cask 'httpie'
+cask 'httpie-desktop'
 cask 'imageoptim'
-cask 'nordvpn'
 
 # Media
+cask 'iina'
 cask 'spotify'
 cask 'plexamp'
-cask 'vlc'
 
 # Communication
 cask 'discord'
-cask 'messenger'
-cask 'microsoft-teams'
-cask 'zoom'
 
 # Quicklook
 cask 'qlmarkdown'
 cask 'quicklook-json'
-
-# Mac App Store
-mas 'Keynote', id: 409183694
-mas 'Numbers', id: 409203825
-mas 'Things', id: 904280696

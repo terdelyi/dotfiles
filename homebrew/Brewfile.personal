@@ -1,0 +1,23 @@
+# Personal machine only. Installed after Brewfile when ~/.dotfiles.profile
+# says "personal".
+
+# Languages
+brew 'python@3.14'
+brew 'go'
+
+# Dev
+cask 'affinity'
+cask 'transmit'
+
+# Utils
+cask 'nordvpn'
+
+# Communication
+cask 'messenger'
+cask 'microsoft-teams'
+cask 'zoom'
+
+# Mac App Store
+mas 'Keynote', id: 409183694
+mas 'Numbers', id: 409203825
+mas 'Things', id: 904280696

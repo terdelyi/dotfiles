@@ -18,6 +18,21 @@ Then run the installer for generic system setup:
 
 It is safe to re-run — every step is idempotent.
 
+## Machine profiles
+
+`homebrew/Brewfile` holds what every machine gets. Anything beyond that lives in
+`homebrew/Brewfile.personal` or `homebrew/Brewfile.work`, and the installer picks
+one based on `~/.dotfiles.profile` — a one-line untracked file holding `personal`
+or `work`. The installer asks on a fresh machine and remembers the answer; edit
+the file to switch.
+
+Both profiles are tracked here, so the work machine's list is reviewable rather
+than being the personal list minus whatever got skipped by hand.
+
+Note that Homebrew strips any environment variable not named `HOMEBREW_*` before
+reading a Brewfile, so the tempting `if ENV['WORK']` conditional inside a single
+Brewfile silently never fires. Hence the split.
+
 ## Git identity
 
 Name, email and signing keys live in `~/.gitconfig.local`, which is not tracked
