@@ -19,14 +19,6 @@ Then run the installer:
 The profile is asked for if omitted and remembered in `~/.dotfiles.profile`.
 Safe to re-run — every step is idempotent.
 
-## Machine profiles
-
-`homebrew/Brewfile` installs on every machine. `Brewfile.personal` and
-`Brewfile.work` add to it, and the profile picks one.
-
-The profile also prompts for a matching Git identity, and leaves the computer
-name alone on a work machine. Everything else is installed on both.
-
 ## Git identity
 
 Name, email and signing keys live in `~/.gitconfig.local`, untracked and
