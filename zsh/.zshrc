@@ -47,8 +47,24 @@ export LC_CTYPE=en_GB.UTF-8
 GPG_TTY=$(tty)
 export GPG_TTY
 
-# Load nvm
-[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
+# Load nvm on first use. Sourcing nvm.sh eagerly cost about 0.23s of a 0.47s
+# shell startup - half of it - and most shells never touch node. Stub the
+# commands it provides; the first call replaces the stubs with the real thing
+# and re-runs itself, so this is invisible in use.
+export NVM_DIR="$HOME/.nvm"
+
+if [[ -s $NVM_DIR/nvm.sh ]]; then
+  _load_nvm() {
+    unfunction nvm node npm npx 2>/dev/null
+    . "$NVM_DIR/nvm.sh"
+  }
+
+  for _cmd in nvm node npm npx; do
+    eval "$_cmd() { _load_nvm; $_cmd \"\$@\"; }"
+  done
+
+  unset _cmd
+fi
 
 # Autocomplete
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh

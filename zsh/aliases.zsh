@@ -5,16 +5,17 @@ alias reloaddns="dscacheutil -flushcache && sudo killall -HUP mDNSResponder"
 alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
 
 # Docker
-alias docker-composer="docker-compose"
+# Compose v1 is end-of-life; the subcommand is the supported form.
+alias docker-composer="docker compose"
 
 # Git
 alias gs="git status"
 alias gb="git branch"
 alias gc="git checkout"
+alias gd="git diff"
 alias gl="git log --oneline --decorate --color"
 alias amend="git add . && git commit --amend --no-edit"
 alias commit="git add . && git commit -m"
-alias diff="git diff"
 alias force="git push --force-with-lease"
 alias nuke="git clean -df && git reset --hard"
 alias pop="git stash pop"

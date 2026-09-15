@@ -1,0 +1,8 @@
+# Work machine only. Installed after Brewfile when ~/.dotfiles.profile
+# says "work".
+
+# Communication
+cask 'slack'
+
+# Mac App Store
+mas 'Tailscale', id: 1475387142

@@ -1,0 +1,62 @@
+# Personal machine only. Installed after Brewfile when ~/.dotfiles.profile
+# says "personal".
+
+# Languages
+brew 'python'
+brew 'go'
+
+# Dev
+cask 'affinity'
+cask 'flutter'
+cask 'ngrok'
+cask 'obsidian'
+cask 'transmit'
+
+# Utils
+# The cask is the full build; the App Store version (id 905953485) is
+# sandboxed and more limited, so this is the one to keep. Uninstall the other
+# with `mas uninstall 905953485`.
+cask 'nordvpn'
+
+# Media
+brew 'yt-dlp'
+cask 'iina'
+cask 'ableton-live-suite@10'
+cask 'audio-hijack'
+cask 'gimp'
+cask 'netdownloadhelpercoapp'
+cask 'obs'
+cask 'qbittorrent'
+cask 'soulseek'
+cask 'xld'
+
+# Hardware
+cask 'applepi-baker'
+cask 'balenaetcher'
+cask 'deskpad'
+cask 'elgato-control-center'
+cask 'elgato-stream-deck'
+cask 'raspberry-pi-imager'
+
+# Games
+cask 'minecraft'
+
+# Communication
+cask 'messenger'
+cask 'microsoft-teams'
+cask 'zoom'
+
+# Mac App Store
+mas 'Developer', id: 640199958
+mas 'GarageBand', id: 682658836
+mas 'Hand Mirror', id: 1502839586
+mas 'iMovie', id: 408981434
+mas 'KeyFinder', id: 6449409689
+mas 'Keynote', id: 361285480
+mas 'MusicBox', id: 1614730313
+mas 'Numbers', id: 361304891
+mas 'Pages', id: 361309726
+mas 'Teleprompter', id: 417605357
+mas 'TestFlight', id: 899247664
+mas 'Things', id: 904280696
+mas 'Transporter', id: 1450874784

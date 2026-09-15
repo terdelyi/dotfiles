@@ -10,19 +10,19 @@ Clone the repo:
 git clone https://github.com/terdelyi/dotfiles.git ~/.dotfiles
 ```
 
-Then run the installer for generic system setup:
+Then run the installer:
 
 ```bash
-. ~/.dotfiles/install.sh
+. ~/.dotfiles/install.sh [personal|work]
 ```
 
-It is safe to re-run — every step is idempotent.
+The profile is asked for if omitted and remembered in `~/.dotfiles.profile`.
+Safe to re-run — every step is idempotent.
 
 ## Git identity
 
-Name, email and signing keys live in `~/.gitconfig.local`, which is not tracked
-here — `git/.gitconfig` includes it. The installer seeds a placeholder version
-on a fresh machine; fill it in before your first commit:
+Name, email and signing keys live in `~/.gitconfig.local`, untracked and
+included from `git/.gitconfig`:
 
 ```gitconfig
 [user]
@@ -31,6 +31,12 @@ on a fresh machine; fill it in before your first commit:
 	signingkey = ssh-ed25519 AAAA...   # public half, used by 1Password
 	gpgsigningkey = 0123456789ABCDEF   # read by set_gpg_signing_key
 ```
+
+The installer prompts for name and email. Leave them blank and git refuses to
+commit until you fill them in.
+
+`~/.ssh/allowed_signers` is written from these values, which
+`git log --show-signature` needs in order to verify.
 
 A second identity is an `includeIf` in the same file:
 
