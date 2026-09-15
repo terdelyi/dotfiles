@@ -22,6 +22,28 @@ ln -sfnw "$HOME/.dotfiles/zsh/.zshrc" "$HOME/.zshrc"
 ln -sfnw "$HOME/.dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 ln -sfnw "$HOME/.dotfiles/git/.gitignore_global" "$HOME/.gitignore_global"
 
+# Identity is machine-local and deliberately untracked, so .gitconfig includes
+# it from here. Seed a template on a fresh machine; never clobber a real one.
+gitconfig_local="$HOME/.gitconfig.local"
+
+if test ! -f "$gitconfig_local"; then
+  echo "Seeding $gitconfig_local - fill in your identity before committing..."
+
+  cat > "$gitconfig_local" <<'EOF'
+# Machine-local identity. Not tracked in ~/.dotfiles - included from
+# git/.gitconfig. Add includeIf blocks here for per-directory identities.
+[user]
+	name = Your Name
+	email = you@example.com
+	# Public half of the signing key, as `ssh-ed25519 AAAA...`.
+	signingkey =
+	# Read by set_gpg_signing_key in zsh/functions.zsh.
+	gpgsigningkey =
+EOF
+
+  chmod 600 "$gitconfig_local"
+fi
+
 # Stop macOS from forwarding our locale to every host we SSH into.
 # /etc/ssh/ssh_config.d/100-macos.conf sets `SendEnv LANG LC_*`, which ships
 # locale names the remote may not have generated, producing "cannot change

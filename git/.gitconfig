@@ -1,7 +1,8 @@
-[user]
-	name = Tamas Erdelyi
-	email = tamas@tripleweb.co.uk
-    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G
+# Identity lives in ~/.gitconfig.local, which is not tracked here. install.sh
+# seeds it. Keeping [user] out of the repo makes room for per-directory
+# identities via includeIf without touching the shared config.
+[include]
+    path = ~/.gitconfig.local
 
 [core]
 	excludesfile = ~/.gitignore_global

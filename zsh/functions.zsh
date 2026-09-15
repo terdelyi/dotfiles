@@ -3,8 +3,13 @@
 # Function to set or change the GPG key for signing commits in a Git repository
 set_gpg_signing_key() {
     local repo_path="$PWD"
-    local gpg_key_id=${1:-"0F7F96EC6F3C0C38"}
+    local gpg_key_id=${1:-$(git config --global --includes --get user.gpgsigningkey)}
     local email=${2:-""}
+
+    if [ -z "$gpg_key_id" ]; then
+        echo "Error: no key given and user.gpgsigningkey is unset in ~/.gitconfig.local." >&2
+        return 1
+    fi
 
     # rev-parse also accepts subdirectories, worktrees and submodules, where
     # .git is a file rather than a directory.
@@ -28,8 +33,13 @@ set_gpg_signing_key() {
 # Function to set or change the SSH key for signing commits in a Git repository
 set_ssh_signing_key() {
     local repo_path="$PWD"
-    local ssh_key=${1:-"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYEzp7aGJuhbHOgvwD2XriBk1YuvlpZcJ3WAoanos+G"}
+    local ssh_key=${1:-$(git config --global --includes --get user.signingkey)}
     local email=${2:-""}
+
+    if [ -z "$ssh_key" ]; then
+        echo "Error: no key given and user.signingkey is unset in ~/.gitconfig.local." >&2
+        return 1
+    fi
 
     # rev-parse also accepts subdirectories, worktrees and submodules, where
     # .git is a file rather than a directory.
