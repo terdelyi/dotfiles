@@ -20,6 +20,22 @@ if test ! -d "$HOME/.oh-my-zsh"; then
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
+# The Command Line Tools, not Xcode.app, are what Homebrew, PHP and Valet
+# actually build against. Homebrew's installer pulls them in too, but the
+# dependency is worth stating: without them `brew install php` fails to
+# compile. `xcode-select -p` succeeds when either CLT or a full Xcode is
+# selected, so test for the CLT package itself.
+if ! pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null 2>&1; then
+  echo "Installing the Xcode Command Line Tools - accept the GUI prompt..."
+  xcode-select --install 2>/dev/null
+
+  # The installer runs detached in the background, so wait it out rather than
+  # racing Homebrew into a broken compile.
+  until pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null 2>&1; do
+    sleep 10
+  done
+fi
+
 # Check for Homebrew and install if we don't have it
 if test ! "$(which brew)"; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
