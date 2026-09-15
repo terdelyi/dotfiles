@@ -5,11 +5,34 @@
     path = ~/.gitconfig.local
 
 [core]
-	excludesfile = ~/.gitignore_global
-	autocrlf = input
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
 
 [color]
     ui = auto
+
+[init]
+    defaultBranch = main
+
+[pull]
+    # Merge commits from a plain `git pull` are noise; replay local work instead.
+    rebase = true
+
+[fetch]
+    # What the `prune` alias in zsh/aliases.zsh did by hand.
+    prune = true
+    pruneTags = true
+
+[rerere]
+    # Remember how a conflict was resolved and reapply it the next time the
+    # same one shows up - which a rebase-by-default workflow makes likely.
+    enabled = true
+    autoUpdate = true
+
+[diff]
+    # Colour moved lines differently from added and removed ones, so a large
+    # refactor reads as a move rather than a rewrite.
+    colorMoved = zebra
 
 [github]
     user = terdelyi
@@ -18,7 +41,7 @@
     gpgSign = true
 
 [tag]
-  	gpgsign = true
+    gpgsign = true
 
 [gpg "ssh"]
     program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign

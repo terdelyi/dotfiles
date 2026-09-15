@@ -13,8 +13,10 @@ if test ! -f "$DOTFILES_ROOT/install.sh"; then
   return 1 2>/dev/null || exit 1
 fi
 
-# Check for Oh My Zsh and install if we don't have it
-if test ! "$(which omz)"; then
+# Check for Oh My Zsh and install if we don't have it. `omz` is a shell
+# function rather than a binary, so `which omz` never finds it from this
+# script - testing for it re-ran the installer on every pass.
+if test ! -d "$HOME/.oh-my-zsh"; then
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 fi
 
@@ -22,7 +24,15 @@ fi
 if test ! "$(which brew)"; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-  echo "eval \"$(/opt/homebrew/bin/brew shellenv)\"" >> "$HOME/.zprofile"
+  # The line has to reach .zprofile literally. Inside double quotes the
+  # command substitution would run here instead, freezing today's paths into
+  # the file - and its own quotes would nest and break the `eval`.
+  brew_shellenv='eval "$(/opt/homebrew/bin/brew shellenv)"'
+
+  if ! grep -qxF "$brew_shellenv" "$HOME/.zprofile" 2>/dev/null; then
+    printf '%s\n' "$brew_shellenv" >> "$HOME/.zprofile"
+  fi
+
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 

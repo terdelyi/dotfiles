@@ -22,6 +22,7 @@ brew 'go'
 brew 'php'
 
 # Terminal
+brew 'pure'
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting'
 
