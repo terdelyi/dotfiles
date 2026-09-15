@@ -25,12 +25,16 @@ sudo_keepalive_pid=$!
 # Personal machines only: a work machine is usually named by IT, and colliding
 # with their naming policy is worse than leaving it alone. Read the profile
 # from disk rather than inheriting it, so this file still works run directly.
+#
+# Renaming is the branch that acts, so an unknown profile must not select it -
+# install.sh writes the file before sourcing this, so a missing one means this
+# script was run on its own and we have no idea which machine it is.
 profile_file="$HOME/.dotfiles.profile"
 
 if [ -f "$profile_file" ]; then
     macos_profile=$(cat "$profile_file")
 else
-    macos_profile=personal
+    macos_profile=unknown
 fi
 
 if [ "$macos_profile" = personal ]; then
@@ -39,7 +43,7 @@ if [ "$macos_profile" = personal ]; then
     sudo scutil --set LocalHostName "MacBook Tamas"
     sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MacBook Tamas"
 else
-    echo "Leaving the computer name alone on a $macos_profile machine."
+    echo "Leaving the computer name alone ($macos_profile profile)."
 fi
 
 # Disable the startup chime. Apple Silicon ignores the old SystemAudioVolume
