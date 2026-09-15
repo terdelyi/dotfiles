@@ -44,6 +44,27 @@ EOF
   chmod 600 "$gitconfig_local"
 fi
 
+# git verifies signatures against this file, so it has to name the same key the
+# identity signs with. Derive both from the config rather than duplicating them.
+# --includes is needed because --global turns include expansion off.
+allowed_signers="$HOME/.ssh/allowed_signers"
+signer_email=$(git config --global --includes --get user.email)
+signer_key=$(git config --global --includes --get user.signingkey)
+
+if test -n "$signer_email" && test -n "$signer_key"; then
+  signer_line="$signer_email $signer_key"
+
+  mkdir -p "$HOME/.ssh"
+  touch "$allowed_signers"
+
+  if ! grep -qxF "$signer_line" "$allowed_signers"; then
+    echo "Trusting $signer_email in $allowed_signers..."
+    echo "$signer_line" >> "$allowed_signers"
+  fi
+
+  chmod 600 "$allowed_signers"
+fi
+
 # Stop macOS from forwarding our locale to every host we SSH into.
 # /etc/ssh/ssh_config.d/100-macos.conf sets `SendEnv LANG LC_*`, which ships
 # locale names the remote may not have generated, producing "cannot change

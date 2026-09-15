@@ -32,6 +32,10 @@ on a fresh machine; fill it in before your first commit:
 	gpgsigningkey = 0123456789ABCDEF   # read by set_gpg_signing_key
 ```
 
+The installer also writes `~/.ssh/allowed_signers` from those values, which is
+what `git log --show-signature` verifies against — signing works without it,
+verifying does not.
+
 A second identity is an `includeIf` in the same file:
 
 ```gitconfig
