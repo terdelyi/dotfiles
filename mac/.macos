@@ -233,11 +233,15 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 # Dock                                                                        #
 ###############################################################################
 
+# Auto-hide the Dock. This was set by hand on the current machine but never
+# recorded here, so a rebuilt Mac came back with the Dock always visible.
+defaults write com.apple.dock autohide -bool true
+
 # Set the icon size of Dock items to 50 pixels
 defaults write com.apple.dock tilesize -int 50
 
 # Move Dock to left
-defaults write com.apple.dock orientation left
+defaults write com.apple.dock orientation -string "left"
 
 # Change minimize/maximize window effect
 defaults write com.apple.dock mineffect -string "scale"
