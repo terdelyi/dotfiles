@@ -26,9 +26,7 @@ cask 'audio-hijack'
 cask 'gimp'
 cask 'netdownloadhelpercoapp'
 cask 'obs'
-cask 'qbittorrent'
 cask 'soulseek'
-cask 'xld'
 
 # Hardware
 cask 'applepi-baker'
@@ -42,7 +40,6 @@ cask 'raspberry-pi-imager'
 cask 'minecraft'
 
 # Communication
-cask 'messenger'
 cask 'microsoft-teams'
 cask 'zoom'
 
