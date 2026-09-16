@@ -207,6 +207,42 @@ else
   echo "No Brewfile for profile '$profile' - skipping extras." >&2
 fi
 
+# Claude Code status line - the bar along the bottom showing project, branch,
+# model, context use, cost and rate limits.
+#
+# The script is tracked here and symlinked, because Claude Code only ever reads
+# it. settings.json is NOT symlinked: Claude Code rewrites that file whenever
+# you change the model or theme, and a rewrite would replace the symlink with a
+# regular file, quietly detaching it from the repo. Merge in just the statusLine
+# key instead, so everything else in there is left alone.
+#
+# This runs after `brew bundle` because it needs jq. The path is resolved now
+# rather than left as $HOME, so the value in settings.json is literal.
+claude_dir="$HOME/.claude"
+claude_settings="$claude_dir/settings.json"
+
+mkdir -p "$claude_dir"
+ln -sfnw "$DOTFILES_ROOT/claude/statusline-command.sh" "$claude_dir/statusline-command.sh"
+
+if command -v jq > /dev/null 2>&1; then
+  test -f "$claude_settings" || printf '{}\n' > "$claude_settings"
+
+  claude_tmp="$claude_settings.tmp"
+
+  if jq --arg cmd "bash $claude_dir/statusline-command.sh" \
+      '.statusLine = {type: "command", command: $cmd}' \
+      "$claude_settings" > "$claude_tmp" 2>/dev/null; then
+    mv "$claude_tmp" "$claude_settings"
+    chmod 600 "$claude_settings"
+    echo "Claude Code status line configured."
+  else
+    rm -f "$claude_tmp"
+    echo "Left $claude_settings alone - it is not valid JSON." >&2
+  fi
+else
+  echo "jq missing - skipping the Claude Code status line." >&2
+fi
+
 # Create a projects directories
 mkdir -p "$HOME/Code"
 
