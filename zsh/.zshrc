@@ -66,12 +66,34 @@ if [[ -s $NVM_DIR/nvm.sh ]]; then
   unset _cmd
 fi
 
-# Autocomplete
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Everything below is optional on purpose. install.sh symlinks this file before
+# `brew bundle` runs, so between those two points none of it exists yet - and an
+# unguarded `source $(brew --prefix)/...` made every new shell spew errors and
+# left no working prompt. A partially installed machine must still give a shell
+# you can finish the install from.
+if (( $+commands[brew] )); then
+  brew_prefix=$(brew --prefix)
 
-# What is this?
+  # Autocomplete
+  [[ -r $brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]] &&
+    source $brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  [[ -r $brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
+    source $brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+  unset brew_prefix
+else
+  echo "zshrc: brew is not on PATH - run ~/.dotfiles/install.sh to finish setup." >&2
+fi
+
+# Pure prompt, if brew has installed it yet; a plain one otherwise. `prompt
+# pure` cannot be tested by exit status - with pure missing it prints its usage
+# to stdout and still returns 0 - so ask promptinit what it actually has.
 autoload -U promptinit; promptinit
-prompt pure
+
+if (( $+functions[prompt_pure_setup] )); then
+  prompt pure
+else
+  PROMPT='%n@%m %~ %# '
+fi
 
 export SSH_AUTH_SOCK=~/.1password/agent.sock

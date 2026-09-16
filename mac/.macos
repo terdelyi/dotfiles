@@ -308,18 +308,24 @@ defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool t
 # Kill affected applications                                                  #
 ###############################################################################
 
+# Close the sudo window this script opened rather than leaving it to time out.
+# This has to happen BEFORE the killall loop: install.sh sources this file, so
+# killing the terminal takes the whole script with it and nothing below the
+# loop runs - which orphaned the keepalive to poll sudo forever.
+kill "$sudo_keepalive_pid" 2>/dev/null
+sudo -k
+
+# Terminal is deliberately absent from this list. It used to be here, and since
+# install.sh sources this file, restarting it killed the installer's own
+# session mid-run - taking out everything that had not executed yet. The
+# preferences above apply to a new tab anyway; quit and reopen Terminal to
+# pick them up.
 for app in "Activity Monitor" \
     "cfprefsd" \
     "Dock" \
     "Finder" \
-    "Google Chrome" \
-    "SystemUIServer" \
-    "Terminal"; do
+    "SystemUIServer"; do
     killall "${app}" &> /dev/null
 done
-
-# Close the sudo window this script opened rather than leaving it to time out.
-kill "$sudo_keepalive_pid" 2>/dev/null
-sudo -k
 
 echo "Done. Note that some of these changes require a logout/restart to take effect."
