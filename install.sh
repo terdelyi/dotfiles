@@ -72,8 +72,15 @@ if ! pkgutil --pkg-info=com.apple.pkg.CLTools_Executables > /dev/null 2>&1; then
   done
 fi
 
-# Check for Homebrew and install if we don't have it
-if test ! "$(which brew)"; then
+# Check for Homebrew and install if we don't have it.
+#
+# `command -v` and not `which`: the README says to source this file, so it runs
+# under zsh whatever the shebang claims, and zsh's `which` prints "brew not
+# found" to stdout and exits 0. That made `test ! "$(which brew)"` false on a
+# machine with no Homebrew, skipping this whole block - so nothing installed,
+# ~/.zprofile never got its shellenv line, and every later step failed. Test
+# the exit status, which behaves the same in sh and zsh.
+if ! command -v brew > /dev/null 2>&1; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
   # The line has to reach .zprofile literally. Inside double quotes the
@@ -189,7 +196,8 @@ brew update
 # so a plain `if ENV['WORK']` in a Brewfile silently never fires.
 profile_brewfile="$DOTFILES_ROOT/homebrew/Brewfile.$profile"
 
-brew tap homebrew/bundle
+# No `brew tap homebrew/bundle` here: that tap was deprecated and emptied, and
+# tapping it now errors. `brew bundle` ships inside Homebrew itself.
 brew bundle --file "$DOTFILES_ROOT/homebrew/Brewfile"
 
 if test -f "$profile_brewfile"; then

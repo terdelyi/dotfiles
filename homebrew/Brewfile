@@ -6,9 +6,6 @@
 # one" form. Anything that should not land on the work machine belongs in
 # Brewfile.personal instead.
 
-# Taps
-tap 'homebrew/bundle'
-
 # Binaries
 brew 'ansible'
 brew 'bash'
