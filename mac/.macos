@@ -66,7 +66,7 @@ defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -r -domain local -domain system -domain user
 
 # Display ASCII control characters using caret notation in standard text views
 # Try e.g. `cd /tmp; unidecode "\x{0000}" > cc.txt; open -e cc.txt`
@@ -102,12 +102,20 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 # (e.g. enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# Use scroll gesture with the Ctrl (^) modifier key to zoom
-defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
-
-# Follow the keyboard focus while zoomed in
-defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true
+# Use scroll gesture with the Ctrl (^) modifier key to zoom, and follow the
+# keyboard focus while zoomed in.
+#
+# com.apple.universalaccess is protected by TCC: macOS refuses the write with
+# "Could not write domain" unless the terminal running this holds Full Disk
+# Access, and it does not prompt for it. Report that once rather than letting
+# all three calls print their own failure.
+if ! defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true 2>/dev/null; then
+    echo "Skipping zoom settings: grant your terminal Full Disk Access in"
+    echo "  System Settings > Privacy & Security > Full Disk Access, then re-run."
+else
+    defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
+    defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true
+fi
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
@@ -121,7 +129,8 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool true
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-sudo systemsetup -settimezone "Europe/London" > /dev/null
+sudo systemsetup -settimezone "Europe/London" > /dev/null 2>&1 ||
+    echo "Could not set the timezone (needs Full Disk Access); set it in System Settings."
 
 # Stop the media keys from launching Music
 launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
@@ -131,15 +140,18 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/nul
 ###############################################################################
 
 # Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
+sudo systemsetup -setrestartfreeze on > /dev/null 2>&1 ||
+    echo "Could not set restart-on-freeze (needs Full Disk Access)."
 
-# Sleep the display after 15 minutes
-sudo pmset -a displaysleep 15
-
-# Disable machine sleep while charging
+# Sleep the display after 15 minutes on mains power, where the machine itself
+# never sleeps.
+sudo pmset -c displaysleep 15
 sudo pmset -c sleep 0
 
-# Set machine sleep to 5 minutes on battery
+# On battery the machine sleeps after 5 minutes, so the display has to go
+# first - pmset warns that the timings "may not behave as expected" if the
+# display outlasts the system, which `-a displaysleep 15` did.
+sudo pmset -b displaysleep 3
 sudo pmset -b sleep 5
 
 ###############################################################################
