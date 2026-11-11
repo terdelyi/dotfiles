@@ -14,6 +14,8 @@ brew 'coreutils'
 brew 'ffmpeg'
 brew 'gh'
 brew 'git'
+# git/.gitconfig requires the LFS filter, so checkouts of LFS repos fail without it.
+brew 'git-lfs'
 brew 'grep'
 brew 'jq'
 brew 'mas'
