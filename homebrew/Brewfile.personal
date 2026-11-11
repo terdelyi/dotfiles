@@ -26,9 +26,7 @@ cask 'audio-hijack'
 cask 'gimp'
 cask 'netdownloadhelpercoapp'
 cask 'obs'
-cask 'qbittorrent'
 cask 'soulseek'
-cask 'xld'
 
 # Hardware
 cask 'applepi-baker'
@@ -42,7 +40,6 @@ cask 'raspberry-pi-imager'
 cask 'minecraft'
 
 # Communication
-cask 'messenger'
 cask 'microsoft-teams'
 cask 'zoom'
 
@@ -60,3 +57,4 @@ mas 'Teleprompter', id: 417605357
 mas 'TestFlight', id: 899247664
 mas 'Things', id: 904280696
 mas 'Transporter', id: 1450874784
+mas 'Xcode', id: 497799835

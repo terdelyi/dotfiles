@@ -4,5 +4,7 @@
 # Communication
 cask 'slack'
 
-# Mac App Store
-mas 'Tailscale', id: 1475387142
+# Networking
+# The cask, not `mas 'Tailscale'`: a work Apple Account is usually managed and
+# cannot acquire App Store apps at all. Same application, same auto-updates.
+cask 'tailscale-app'

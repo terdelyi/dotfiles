@@ -88,7 +88,3 @@ cask 'telegram'
 
 # Quicklook
 cask 'qlmarkdown'
-cask 'quicklook-json'
-
-# Mac App Store
-mas 'Xcode', id: 497799835
