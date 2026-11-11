@@ -98,6 +98,10 @@ fi
 # Sets OhMyZSH config
 ln -sfnw "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
 
+# Gives non-interactive shells (e.g. `zsh -c ...`) a usable node on PATH, since
+# they skip .zshrc entirely and never reach its nvm lazy-load.
+ln -sfnw "$DOTFILES_ROOT/zsh/.zshenv" "$HOME/.zshenv"
+
 # Sets Git config
 ln -sfnw "$DOTFILES_ROOT/git/.gitconfig" "$HOME/.gitconfig"
 ln -sfnw "$DOTFILES_ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
