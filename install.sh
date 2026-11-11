@@ -13,6 +13,22 @@ if test ! -f "$DOTFILES_ROOT/install.sh"; then
   return 1 2>/dev/null || exit 1
 fi
 
+# Valet's nginx and php-fpm configs, the SSH drop-in, Homebrew services and the
+# macOS defaults all land on the real machine no matter where $HOME points, but
+# their *contents* are built from $HOME. A sandboxed trial run with $HOME
+# redirected therefore does not stay in its sandbox: `valet install` once wrote
+# a temp-directory socket path into /opt/homebrew/etc/nginx/valet/valet.conf,
+# and the real Valet then refused to start. The password database knows the
+# true home whatever $HOME says, so compare the two and skip those steps.
+real_home=$(eval "echo ~$(id -un)")
+
+if test "$HOME" = "$real_home"; then
+  writes_outside_home=yes
+else
+  writes_outside_home=no
+  echo "HOME is $HOME, not $real_home - skipping the steps that write outside HOME."
+fi
+
 # The profile decides which Brewfile extras, which computer name and which Git
 # identity apply, so settle it before the ten minutes of downloads rather than
 # after. An argument wins, then a previous answer, then a prompt.
@@ -178,7 +194,9 @@ fi
 # system one - so this goes in a sibling that sorts later in the include.
 ssh_locale_conf="/etc/ssh/ssh_config.d/200-no-locale-forwarding.conf"
 
-if ssh -G dotfiles-install-probe 2>/dev/null | grep -qiE '^sendenv (lang|lc_)'; then
+if test "$writes_outside_home" = no; then
+  echo "Skipping the SSH locale drop-in - it writes to /etc/ssh."
+elif ssh -G dotfiles-install-probe 2>/dev/null | grep -qiE '^sendenv (lang|lc_)'; then
   echo "Disabling SSH locale forwarding in $ssh_locale_conf..."
 
   sudo tee "$ssh_locale_conf" > /dev/null <<'EOF'
@@ -250,16 +268,31 @@ fi
 # Create a projects directories
 mkdir -p "$HOME/Code"
 
-# Install Valet for PHP prototyping
+# Install Valet for PHP prototyping. `valet install` bakes $HOME into the
+# global nginx and php-fpm configs, so it is the one step a redirected $HOME
+# must never reach.
 composer global require laravel/valet
-valet install
-valet trust
+
+if test "$writes_outside_home" = yes; then
+  valet install
+  valet trust
+else
+  echo "Skipping valet install - it would write this HOME into /opt/homebrew/etc."
+fi
 
 # Set 1Password SSH agent
 mkdir -p ~/.1password && ln -sfnw ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ~/.1password/agent.sock
 
 # Start Mailpit
-brew services start mailpit
+if test "$writes_outside_home" = yes; then
+  brew services start mailpit
+else
+  echo "Skipping the Mailpit service - brew services is machine-wide."
+fi
 
 # Set macOS preferences - we will run this last because this will reload the shell
-. "$DOTFILES_ROOT/mac/.macos"
+if test "$writes_outside_home" = yes; then
+  . "$DOTFILES_ROOT/mac/.macos"
+else
+  echo "Skipping the macOS defaults - they apply to the logged-in user, not HOME."
+fi
