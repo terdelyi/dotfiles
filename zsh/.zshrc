@@ -48,22 +48,17 @@ GPG_TTY=$(tty)
 export GPG_TTY
 
 # Load nvm on first use. Sourcing nvm.sh eagerly cost about 0.23s of a 0.47s
-# shell startup - half of it - and most shells never touch node. Stub the
-# commands it provides; the first call replaces the stubs with the real thing
-# and re-runs itself, so this is invisible in use.
+# shell startup - half of it - and most shells never touch node. node, npm and
+# npx come from .zshenv's PATH, so only nvm itself needs a stub. It must not
+# call a helper: Claude Code's shell snapshot copies the stub but not helpers.
 export NVM_DIR="$HOME/.nvm"
 
 if [[ -s $NVM_DIR/nvm.sh ]]; then
-  _load_nvm() {
-    unfunction nvm node npm npx 2>/dev/null
+  nvm() {
+    unfunction nvm
     . "$NVM_DIR/nvm.sh"
+    nvm "$@"
   }
-
-  for _cmd in nvm node npm npx; do
-    eval "$_cmd() { _load_nvm; $_cmd \"\$@\"; }"
-  done
-
-  unset _cmd
 fi
 
 # Everything below is optional on purpose. install.sh symlinks this file before
